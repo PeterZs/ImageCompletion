@@ -6,18 +6,6 @@ import cv2
 
 
 def poisson_blend(x, output, mask):
-    """
-    * inputs:
-        - x (torch.Tensor, required)
-                Input image tensor of shape (N, 3, H, W).
-        - output (torch.Tensor, required)
-                Output tensor from Completion Network of shape (N, 3, H, W).
-        - mask (torch.Tensor, required)
-                Input mask tensor of shape (N, 1, H, W).
-    * returns:
-                An image tensor of shape (N, 3, H, W) inpainted
-                using poisson image editing method.
-    """
     x = x.clone().cpu()
     output = output.clone().cpu()
     mask = mask.clone().cpu()
@@ -35,7 +23,7 @@ def poisson_blend(x, output, mask):
         xs, ys = [], []
         for i in range(msk.shape[0]):
             for j in range(msk.shape[1]):
-                if msk[i,j,0] == 255:
+                if msk[i, j, 0] == 255:
                     ys.append(i)
                     xs.append(j)
         xmin, xmax = min(xs), max(xs)

@@ -46,10 +46,10 @@ def split_data(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='dataset split setting')
-    parser.add_argument('src_data_dir', type=str, required=True, help='path to the source whole data set')
-    parser.add_argument('--dst_data_dir', type=str, required=True, default='datasets', help='path to the dst dataset')
+    parser.add_argument('src_data_dir', type=str, help='path to the source whole data set')
+    parser.add_argument('--dst_data_dir', type=str, default='datasets', help='path to the dst dataset')
     parser.add_argument('--proportion', type=float, default=0.8, help='proportion of training data(default 0.8)')
 
     args = parser.parse_args()
-    args.data_dir = os.path.expanduser(args.data_dir)
+    args.src_data_dir = os.path.expanduser(args.src_data_dir)
     split_data(args)

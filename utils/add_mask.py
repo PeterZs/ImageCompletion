@@ -11,9 +11,9 @@ from .generate_random_holes import gen_input_mask, gen_hole_area
 def add_mask(args, device, batch_data, hole_area, mpv):
     mask = gen_input_mask(
         shape=(batch_data.shape[0], 1, batch_data.shape[2], batch_data.shape[3]),
-        hole_size=((args.hole_min_w, args.hole_max_w), (args.hole_min_h, args.hole_max_h)),
+        hole_size=((args.min_hole_width, args.max_hole_width), (args.min_hole_height, args.max_hole_height)),
         hole_area=hole_area,
-        max_holes=args.max_holes,
+        max_holes=1,
     ).to(device)
     batch_data_with_mask = batch_data - batch_data * mask + mpv * mask
     input_batch = torch.cat((batch_data_with_mask, mask), dim=1)

@@ -8,8 +8,8 @@ import random
 
 def train_data_loader(args):
     data_transform = transforms.Compose([
-        transforms.Resize(args.cn_input_size),
-        transforms.RandomCrop((args.cn_input_size, args.cn_input_size)),
+        transforms.Resize(args.full_image_size),
+        transforms.RandomCrop((args.full_image_size, args.full_image_size)),
         transforms.ToTensor(),
     ])
 
@@ -22,8 +22,8 @@ def train_data_loader(args):
 
 def test_data_loader(args):
     data_transform = transforms.Compose([
-        transforms.Resize(args.cn_input_size),
-        transforms.RandomCrop((args.cn_input_size, args.cn_input_size)),
+        transforms.Resize(args.full_image_size),
+        transforms.RandomCrop((args.full_image_size, args.full_image_size)),
         transforms.ToTensor(),
     ])
 
