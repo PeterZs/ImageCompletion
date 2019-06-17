@@ -34,7 +34,7 @@ def train_phase1(opt, device):
             # forward
             batch = batch.to(device)
 
-            hole_area = gen_hole_area((opt.local_patch_size, opt.local_patch_size), (batch.shape[3], batch.shape[2]))
+            hole_area = get_random_hole((opt.local_patch_size, opt.local_patch_size), (batch.shape[3], batch.shape[2]))
             mask, input_batch, _ = add_mask(opt, device, batch, hole_area, mpv)
             output_batch = completion_net(input_batch)
             loss = completion_network_loss(batch, output_batch, mask)
@@ -53,7 +53,7 @@ def train_phase1(opt, device):
             if process_bar.n % opt.test_period1 == 0:
                 with torch.no_grad():
                     test_batch = sample_random_batch(test_data_set, batch_size=opt.test_batch_size).to(device)
-                    hole_area = gen_hole_area((opt.local_patch_size, opt.local_patch_size), (batch.shape[3], batch.shape[2]))
+                    hole_area = get_random_hole((opt.local_patch_size, opt.local_patch_size), (batch.shape[3], batch.shape[2]))
                     mask, input_batch, batch_data_with_mask = add_mask(opt, device, test_batch, hole_area, mpv)
                     output_batch = completion_net(input_batch)
                     completed = poisson_blend(test_batch, output_batch, mask)
@@ -91,7 +91,7 @@ def train_phase2(opt, device, completion_net):
             # forward of fake
             batch = batch.to(device)
 
-            hole_area_fake = gen_hole_area((opt.local_patch_size, opt.local_patch_size), (batch.shape[3], batch.shape[2]))
+            hole_area_fake = get_random_hole((opt.local_patch_size, opt.local_patch_size), (batch.shape[3], batch.shape[2]))
             mask, completion_input, _ = add_mask(opt, device, batch, hole_area_fake, mpv)
 
             completion_output = completion_net(completion_input)
@@ -102,7 +102,7 @@ def train_phase2(opt, device, completion_net):
             loss_fake = gan_loss(output_fake, fake)
 
             # real forward
-            hole_area_real = gen_hole_area(size=(opt.local_patch_size, opt.local_patch_size),
+            hole_area_real = get_random_hole(size=(opt.local_patch_size, opt.local_patch_size),
                                            mask_size=(batch.shape[3], batch.shape[2]))
             real = torch.ones((len(batch), 1)).to(device)
             input_gd_real = batch
@@ -145,7 +145,7 @@ def train_phase3(opt, device, completion_net, discriminator_net):
             # forward of fake
             batch = batch.to(device)
 
-            hole_area_fake = gen_hole_area((opt.local_patch_size, opt.local_patch_size), (batch.shape[3], batch.shape[2]))
+            hole_area_fake = get_random_hole((opt.local_patch_size, opt.local_patch_size), (batch.shape[3], batch.shape[2]))
             mask, completion_input, _ = add_mask(opt, device, batch, hole_area_fake, mpv)
             completion_output = completion_net(completion_input)
 
@@ -157,7 +157,7 @@ def train_phase3(opt, device, completion_net, discriminator_net):
             loss_fake = gan_loss(output_fake, fake)
 
             # real forward
-            hole_area_real = gen_hole_area(size=(opt.local_patch_size, opt.local_patch_size),
+            hole_area_real = get_random_hole(size=(opt.local_patch_size, opt.local_patch_size),
                                            mask_size=(batch.shape[3], batch.shape[2]))
             real = torch.ones((len(batch), 1)).to(device)
             input_gd_real = batch
@@ -188,7 +188,7 @@ def train_phase3(opt, device, completion_net, discriminator_net):
             if process_bar.n % opt.test_period3 == 0:
                 with torch.no_grad():
                     test_batch = sample_random_batch(test_data_set, batch_size=opt.test_batch_size).to(device)
-                    hole_area = gen_hole_area((opt.local_patch_size, opt.local_patch_size), (batch.shape[3], batch.shape[2]))
+                    hole_area = get_random_hole((opt.local_patch_size, opt.local_patch_size), (batch.shape[3], batch.shape[2]))
                     mask, input_batch, batch_data_with_mask = add_mask(opt, device, test_batch, hole_area, mpv)
                     output_batch = completion_net(input_batch)
                     completed = poisson_blend(test_batch, output_batch, mask)

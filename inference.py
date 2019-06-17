@@ -2,7 +2,6 @@ import cv2
 import time
 import torch
 import argparse
-import json
 from PIL import Image
 import torchvision.transforms as transforms
 from torchvision.utils import save_image
@@ -10,7 +9,7 @@ import numpy as np
 
 from modeling.completion_network import CompletionNetwork
 from utils.poisson_blending import poisson_blend
-from utils.generate_random_holes import gen_input_mask
+from utils.generate_random_holes import get_random_mask
 
 
 # mouse callback function
@@ -42,16 +41,17 @@ def draw_circle(event, x, y, flags, param):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--input_img', default='test_imgs/test_3.jpg')
-    parser.add_argument('--output_img', default='test_imgs/test_3_output.jpg')
+
+    parser.add_argument('--input_img', default='test_imgs/test_7.jpg')
+    parser.add_argument('--output_img', default='test_imgs/test_7_output.jpg')
     parser.add_argument('--model', default='weights/completion/completion_weights.pth')
     parser.add_argument('--config', default='config.json')
     parser.add_argument('--mode', default='manual', choices=['manual', 'random'])
     args = parser.parse_args()
 
-    with open(args.config, 'r') as f:
-        config = json.load(f)
-    mpv = torch.tensor(config['mpv']).view(1, 3, 1, 1)
+    mpv = [0.5062325495504219, 0.4255871700324652, 0.38299278586700136]
+
+    mpv = torch.tensor(mpv).view(1, 3, 1, 1)
     model = CompletionNetwork()
     model = torch.nn.DataParallel(model)
     model.load_state_dict(torch.load(args.model, map_location='cpu'))
@@ -88,7 +88,7 @@ if __name__ == '__main__':
         cv2.destroyAllWindows()
 
     else:
-        mask = gen_input_mask(shape=(1, 1, x.shape[2], x.shape[3]), hole_size=((25, 50), (25, 50),), max_holes=3)
+        mask = get_random_mask(shape=(1, 1, x.shape[2], x.shape[3]), hole_size=((25, 50), (25, 50),), max_holes=3)
 
     with torch.no_grad():
         x_mask = x - x * mask + mpv * mask

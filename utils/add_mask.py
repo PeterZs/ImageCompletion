@@ -5,11 +5,11 @@ import numpy as np
 from PIL import Image
 from tqdm import tqdm
 
-from .generate_random_holes import gen_input_mask, gen_hole_area
+from .generate_random_holes import get_random_mask, get_random_hole
 
 
 def add_mask(args, device, batch_data, hole_area, mpv):
-    mask = gen_input_mask(
+    mask = get_random_mask(
         shape=(batch_data.shape[0], 1, batch_data.shape[2], batch_data.shape[3]),
         hole_size=((args.min_hole_width, args.max_hole_width), (args.min_hole_height, args.max_hole_height)),
         hole_area=hole_area,
